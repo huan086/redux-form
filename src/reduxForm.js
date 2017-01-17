@@ -294,8 +294,12 @@ const createReduxForm =
             }
           }
 
-          getFieldList() {
-            return this.props.registeredFields.map((field) => getIn(field, 'name'))
+          getFieldList(options) {
+            let registeredFields = this.props.registeredFields
+            if (options && options.excludeFieldArray) {
+              registeredFields = registeredFields.filter(field => getIn(field, 'type') !== 'FieldArray')
+            }
+            return registeredFields.map((field) => getIn(field, 'name'))
           }
 
           generateValidator() {
@@ -387,7 +391,7 @@ const createReduxForm =
                   return this.innerOnSubmit()
                 } else {
                   return this.listenToSubmit(handleSubmit(checkSubmit(onSubmit),
-                    this.props, this.props.validExceptSubmit, this.asyncValidate, this.getFieldList()))
+                    this.props, this.props.validExceptSubmit, this.asyncValidate, this.getFieldList({ excludeFieldArray: true })))
                 }
               }
             } else {
@@ -395,7 +399,7 @@ const createReduxForm =
               return silenceEvents(() => {
                 return !this.submitPromise &&
                   this.listenToSubmit(handleSubmit(checkSubmit(submitOrEvent),
-                    this.props, this.props.validExceptSubmit, this.asyncValidate, this.getFieldList()))
+                    this.props, this.props.validExceptSubmit, this.asyncValidate, this.getFieldList({ excludeFieldArray: true })))
               })
             }
           }
