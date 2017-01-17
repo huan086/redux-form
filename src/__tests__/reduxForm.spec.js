@@ -1485,7 +1485,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
                 foo: 'bob'
               }
             },
-            registeredFields: [ { name: 'deep.foo', type: 'Field' } ]
+            registeredFields: [ { name: 'deep.foo', type: 'Field', count: 0 } ]
           }
         }
       })
@@ -3307,7 +3307,7 @@ const describeReduxForm = (name, structure, combineReducers, expect) => {
           testForm: {
             initial: { foo: 'fooInitial' },
             values: { foo: 'fooChanged' },
-            registeredFields: [ { name: 'foo', type: 'Field' } ]
+            registeredFields: [ { name: 'foo', type: 'Field', count: 0 } ]
           }
         }
       })
