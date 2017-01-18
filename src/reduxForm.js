@@ -77,7 +77,7 @@ const checkSubmit = submit => {
  */
 const createReduxForm =
   structure => {
-    const { deepEqual, empty, getIn, setIn, fromJS } = structure
+    const { deepEqual, empty, getIn, setIn, keys, fromJS } = structure
     const isValid = createIsValid(structure)
     return initialConfig => {
       const config = {
@@ -292,10 +292,18 @@ const createReduxForm =
 
           getFieldList(options) {
             let registeredFields = this.props.registeredFields
-            if (options && options.excludeFieldArray) {
-              registeredFields = registeredFields.filter(field => getIn(field, 'type') !== 'FieldArray')
+            let list = []
+            if (!registeredFields) {
+              return list
             }
-            return registeredFields.map((field) => getIn(field, 'name'))
+            let keySeq = keys(registeredFields)
+            if (options && options.excludeFieldArray) {
+              keySeq = keySeq.filter(name => getIn(registeredFields, `['${name}'].type`) !== 'FieldArray')
+            }
+            return fromJS(keySeq.reduce((acc, key) => {
+              acc.push(key)
+              return acc
+            }, list))
           }
 
           generateValidator() {
@@ -556,7 +564,7 @@ const createReduxForm =
             const asyncErrors = getIn(formState, 'asyncErrors')
             const syncErrors = getIn(formState, 'syncErrors') || {}
             const syncWarnings = getIn(formState, 'syncWarnings') || {}
-            const registeredFields = getIn(formState, 'registeredFields') || []
+            const registeredFields = getIn(formState, 'registeredFields')
             const valid = isValid(form, getFormState, false)(state)
             const validExceptSubmit = isValid(form, getFormState, true)(state)
             const anyTouched = !!getIn(formState, 'anyTouched')
